@@ -1,7 +1,10 @@
 approximate-match
 =================
 
-Works well with unusual abbreviations
+Provides approximate string matching. Works intuitively well, compared to say Levenshtein edit distance.
+
+Specially works with human typing abbreviations.
+
 
 Need a Metric?
 ==============
@@ -20,3 +23,8 @@ Fill a Corpus, then match
 
   approx.match("N'wstrn")
   // Northewestern University
+
+Other methods to fill the corpus
+================================
+
+  approx.add('Northwestern University')
