@@ -16,13 +16,11 @@ var metric = function(a, b) {
     var ch = yz[i].toLowerCase()
     for (var j = idx; j < xz.length; j++) {
       var ch2 = xz[j].toLowerCase()
-//      console.log("ch:", ch, " ch2:", ch2)
       if (ch == ch2) {
         if (dist === 0) 
           count += 2; 
         else
           count++
-//        console.log("COUNT:", count)
         dist = 0;
         idx = j + 1
         break;
@@ -53,5 +51,8 @@ fn.match = function(text) {
     return sr[0].corpus
   else
     return null
+}
+fn.add = function(corpustext) {
+  _corpus = _corpus.concat(corpustext)
 }
 module.exports = exports = fn
