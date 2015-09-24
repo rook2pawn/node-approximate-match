@@ -1,7 +1,8 @@
+var adjust = function(str) {
+  return str.replace(/\W/g,' ').replace(/\s/g,'').trim().split('')
+}
+
 var metric = function(a, b) {
-  var adjust = function(str) {
-    return str.replace(/\W/g,' ').replace(/\s/g,'').trim().split('')
-  }
   if (b.length > a.length) {
     var c = b
     b = a
@@ -31,7 +32,6 @@ var metric = function(a, b) {
   }
   return count
 }
-var metric 
 var _corpus = []
 var fn = function(corpus) {
   _corpus = _corpus.concat(corpus)
@@ -41,18 +41,30 @@ fn.match = function(text) {
   var results = []
   for (var i = 0; i < _corpus.length; i++) {
     var c = _corpus[i]
-    var m = metric(c,text)
-    results.push({metric:m, corpus:c})
+    switch (typeof c) {
+      case 'string' : 
+        var m = metric(c,text)
+        results.push({metric:m, corpus:c})
+        break;
+      case 'object' : 
+        var keys = Object.keys(c)
+        for (var j = 0; j < keys.length; j++) {
+          var key = keys[j]
+          if (typeof text == 'string') {
+            var m = metric(c[key],text)
+            results.push({metric:m, corpus:c})
+          }
+        }
+        break;
+      default: 
+        break;
+    }
   }
-  var sr = results.sort(function(a,b) {
+  return results.sort(function(a,b) {
     return b.metric - a.metric
   })
-  if (sr.length) 
-    return sr[0].corpus
-  else
-    return null
 }
 fn.add = function(corpustext) {
-  _corpus = _corpus.concat(corpustext)
+  _corpus.push(corpustext)
 }
 module.exports = exports = fn

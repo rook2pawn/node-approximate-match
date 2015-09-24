@@ -19,12 +19,22 @@ Fill a Corpus, then match
 =========================
 
     var approx = require('approximate-match')
+  
+    // filling the corpus
     approx(['Northwestern University','San Diego State'])
+    // also fill the corpus via add
+    approx.add('University of Notre Dame')
 
+    // matching it
     approx.match("N'wstrn")
     // Northewestern University
 
-Other methods to fill the corpus
-================================
 
-    approx.add('Northwestern University')
+Object can be added as part of the corpus
+=========================================
+
+You can add either a string or an object. If you add an object its fields will be searched over
+    
+    approx.add({key1:'foo', key2:'bar',key3:'baz})
+    approx.match('foo')
+    // {key1:'foo', key2:'bar',key3:'baz}
