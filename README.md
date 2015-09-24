@@ -38,3 +38,18 @@ You can add either a string or an object. If you add an object its fields will b
     approx.add({key1:'foo', key2:'bar',key3:'baz})
     approx.match('foo')
     // {key1:'foo', key2:'bar',key3:'baz}
+
+Specify certain fields
+======================
+
+You can specify certain fields if the internal matching encounters an object
+The text to be matched will be matched against the keys ordered together.
+
+    approx.add({ name: 'Abilene Christian University',
+    mascot: 'Wildcats',
+    city: 'Abilene',
+    state: 'Texas'})
+
+    approx.match('Abilene Wildcats', ['name','mascot'])
+    // 'Abilene Wildcats' will be matched against 'Abilene Christian University Wildcats'
+    // and return that object

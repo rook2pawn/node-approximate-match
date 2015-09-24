@@ -1,6 +1,6 @@
 {
   "name": "approx-match",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "approximate-match",
   "main": "index.js",
   "scripts": {

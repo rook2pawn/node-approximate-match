@@ -37,7 +37,9 @@ var fn = function(corpus) {
   _corpus = _corpus.concat(corpus)
 }
 fn.metric = metric
-fn.match = function(text) {
+fn.match = function(text,fields) {
+  if (fields === undefined)
+    fields = []
   var results = []
   for (var i = 0; i < _corpus.length; i++) {
     var c = _corpus[i]
@@ -48,11 +50,21 @@ fn.match = function(text) {
         break;
       case 'object' : 
         var keys = Object.keys(c)
-        for (var j = 0; j < keys.length; j++) {
-          var key = keys[j]
-          if (typeof text == 'string') {
-            var m = metric(c[key],text)
-            results.push({metric:m, corpus:c})
+        if (fields.length) {
+          var str = ''
+          fields.forEach(function(key) {
+            str = str.concat(c[key]).concat(' ')
+          })
+          str = str.trim()
+          var m = metric(str, text)
+          results.push({metric:m, corpus:c})
+        } else { 
+          for (var j = 0; j < keys.length; j++) {
+            var key = keys[j]
+            if (typeof text == 'string') {
+              var m = metric(c[key],text)
+              results.push({metric:m, corpus:c})
+            }
           }
         }
         break;

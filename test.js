@@ -11,3 +11,12 @@ assert.equal(approx.match("N'wstrn")[0].corpus,'Northwestern University')
 
 approx.add({foo:'bario'})
 assert.deepEqual(approx.match('bari')[0],{metric:7,corpus:{foo:'bario'}})
+
+approx.add({ name: 'Abilene Christian University',
+mascot: 'Wildcats',
+city: 'Abilene',
+state: 'Texas'})
+
+var res = approx.match('Abilene Wildcats', ['name','mascot'])
+assert.equal(res[0].metric,28)
+assert.equal(res[0].corpus.name,'Abilene Christian University')
