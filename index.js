@@ -13,6 +13,7 @@ var metric = function(a, b) {
   var idx = 0;
   var count = 0;
   var dist = undefined
+  var maxvalued = (2*yz.length) - 1
   for (var i = 0; i < yz.length; i++) {
     var ch = yz[i].toLowerCase()
     for (var j = idx; j < xz.length; j++) {
@@ -24,6 +25,7 @@ var metric = function(a, b) {
           count++
         dist = 0;
         idx = j + 1
+        // if we exhaust the max value early we award bonus
         break;
       } else {
         dist++
@@ -37,7 +39,7 @@ var fn = function(corpus) {
   _corpus = _corpus.concat(corpus)
 }
 fn.metric = metric
-fn.match = function(text,fields) {
+fn.match = function(text,fields,pref_fields) {
   if (fields === undefined)
     fields = []
   var results = []
@@ -52,13 +54,34 @@ fn.match = function(text,fields) {
         var keys = Object.keys(c)
         if (fields.length) {
           var str = ''
+          var scores = []
+          fields.forEach(function(key,idx) {
+            if (c[key] !== undefined) {
+              var m = metric(c[key], text)
+              if (pref_fields.indexOf(key) === 0) {
+                var re = new RegExp('^'+c[key]+'$')
+                if (text.match(re)) {
+                  m = 2*m;
+                }
+              }
+              scores.push(m)
+            }
+          })
+          var m = scores.reduce(function(prev, curr) {
+            return prev + curr
+          })
+          results.push({metric:m, corpus:c})
+/*
           fields.forEach(function(key) {
-            if (c[key] !== undefined)
+            if (c[key] !== undefined) {
               str = str.concat(c[key]).concat(' ')
+              
+            }
           })
           str = str.trim()
           var m = metric(str, text)
           results.push({metric:m, corpus:c})
+*/
         } else { 
           for (var j = 0; j < keys.length; j++) {
             var key = keys[j]
