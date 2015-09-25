@@ -58,7 +58,7 @@ fn.match = function(text,fields,pref_fields) {
           fields.forEach(function(key,idx) {
             if (c[key] !== undefined) {
               var m = metric(c[key], text)
-              if (pref_fields.indexOf(key) === 0) {
+              if (pref_fields && (pref_fields.indexOf(key) === 0)) {
                 var re = new RegExp('^'+c[key]+'$')
                 if (text.match(re)) {
                   m = 2*m;
