@@ -53,7 +53,8 @@ fn.match = function(text,fields) {
         if (fields.length) {
           var str = ''
           fields.forEach(function(key) {
-            str = str.concat(c[key]).concat(' ')
+            if (c[key] !== undefined)
+              str = str.concat(c[key]).concat(' ')
           })
           str = str.trim()
           var m = metric(str, text)
