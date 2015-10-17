@@ -23,6 +23,9 @@ var metric = function(a, b) {
           count += 2; 
         else
           count++
+        if (i === 0) {
+          count += 3;
+        }
         dist = 0;
         idx = j + 1
         // if we exhaust the max value early we award bonus
@@ -51,43 +54,44 @@ fn.match = function(text,fields,pref_fields) {
         results.push({metric:m, corpus:c})
         break;
       case 'object' : 
-        var keys = Object.keys(c)
-        if (fields.length) {
-          var str = ''
-          var scores = []
-          fields.forEach(function(key,idx) {
-            if (c[key] !== undefined) {
-              var m = metric(c[key], text)
-              if (pref_fields && (pref_fields.indexOf(key) === 0)) {
+        if (c.corpustext && c.value) {
+          var m = metric(c.corpustext,text)
+          results.push({metric:m, corpus:c.corpustext,value:c.value})
+        } else { 
+          var keys = Object.keys(c)
+          if (fields && fields.length) {
+            var immediate_match = false;
+            if (pref_fields && pref_fields.length) {
+              for (var j = 0; j < pref_fields.length; j++) {
+                var key = pref_fields[j]
                 var re = new RegExp('^'+c[key]+'$')
                 if (text.match(re)) {
-                  m = 2*m;
+                  m = 1000;
+                  results.push({metric:m, corpus:c})
+                  immediate_match = true
+                  break;
                 }
               }
-              scores.push(m)
-            }
-          })
-          var m = scores.reduce(function(prev, curr) {
-            return prev + curr
-          })
-          results.push({metric:m, corpus:c})
-/*
-          fields.forEach(function(key) {
-            if (c[key] !== undefined) {
-              str = str.concat(c[key]).concat(' ')
-              
-            }
-          })
-          str = str.trim()
-          var m = metric(str, text)
-          results.push({metric:m, corpus:c})
-*/
-        } else { 
-          for (var j = 0; j < keys.length; j++) {
-            var key = keys[j]
-            if (typeof text == 'string') {
-              var m = metric(c[key],text)
+            } 
+            if (!immediate_match) {
+              var str = ''
+              fields.forEach(function(key) {
+                if (c[key] !== undefined) {
+                  str = str.concat(c[key]).concat(' ')
+                }
+              })
+              str = str.trim()
+              //console.log("COMPARING WITH STR:", str)
+              var m = metric(str, text)
               results.push({metric:m, corpus:c})
+            }
+          } else { 
+            for (var j = 0; j < keys.length; j++) {
+              var key = keys[j]
+              if (typeof text == 'string') {
+                var m = metric(c[key],text)
+                results.push({metric:m, corpus:c})
+              }
             }
           }
         }
@@ -100,7 +104,11 @@ fn.match = function(text,fields,pref_fields) {
     return b.metric - a.metric
   })
 }
-fn.add = function(corpustext) {
-  _corpus.push(corpustext)
+fn.add = function(corpustext,value) {
+  if ((value !== undefined) && (typeof value == 'object')) {
+    _corpus.push({corpustext:corpustext,value:value})
+  } else {
+    _corpus.push(corpustext)
+  }
 }
 module.exports = exports = fn

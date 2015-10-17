@@ -5,9 +5,11 @@ Provides approximate string matching. Works intuitively well, compared to say Le
 
 Specially works with human typing abbreviations.
 
+Methods
+=======
 
-Need a Metric?
-==============
+.metric(<string1>,<string2>)
+----------------------------
 
 Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
 
@@ -15,23 +17,28 @@ Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
     approx.metric("N'wstrn", "Northerwestern University")
     // 8
 
-Fill a Corpus, then match
-=========================
+
+.add(<string>)
+--------------
 
     var approx = require('approximate-match')
   
     // filling the corpus
     approx(['Northwestern University','San Diego State'])
-    // also fill the corpus via add
-    approx.add('University of Notre Dame')
-
-    // matching it
-    approx.match("N'wstrn")
-    // Northewestern University
+    // also fill the corpus via .add
+    approx.add('Northwestern University')
 
 
-Object can be added as part of the corpus
-=========================================
+
+.add(<string>,<value>)
+----------------------
+
+approx.add('University of Notre Dame',{foo:'bar})
+
+
+
+.add(<object>)
+--------------
 
 You can add either a string or an object. If you add an object its fields will be searched over
     
@@ -39,8 +46,20 @@ You can add either a string or an object. If you add an object its fields will b
     approx.match('foo')
     // {key1:'foo', key2:'bar',key3:'baz}
 
-Specify certain fields
-======================
+
+
+.match(<string>)
+----------------
+
+    // matching it
+    approx.match("N'wstrn")
+    // Northewestern University
+    
+If there was an associated object it will be returned as well
+
+
+.match(<string>,<list>)
+-----------------------
 
 You can specify certain fields if the internal matching encounters an object
 The text to be matched will be matched against the keys ordered together.
