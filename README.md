@@ -8,8 +8,8 @@ Specially works with human typing abbreviations.
 Methods
 =======
 
-.metric(<string1>,<string2>)
-----------------------------
+.metric(string1,string2)
+------------------------
 
 Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
 
@@ -18,8 +18,8 @@ Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
     // 8
 
 
-.add(<string>)
---------------
+.add(string)
+------------
 
     var approx = require('approximate-match')
   
@@ -30,15 +30,15 @@ Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
 
 
 
-.add(<string>,<value>)
-----------------------
+.add(string,value)
+------------------
 
 approx.add('University of Notre Dame',{foo:'bar})
 
 
 
-.add(<object>)
---------------
+.add(object)
+------------
 
 You can add either a string or an object. If you add an object its fields will be searched over
     
@@ -48,8 +48,8 @@ You can add either a string or an object. If you add an object its fields will b
 
 
 
-.match(<string>)
-----------------
+.match(string)
+--------------
 
     // matching it
     approx.match("N'wstrn")
@@ -58,8 +58,8 @@ You can add either a string or an object. If you add an object its fields will b
 If there was an associated object it will be returned as well
 
 
-.match(<string>,<list>)
------------------------
+.match(string,list)
+-------------------
 
 You can specify certain fields if the internal matching encounters an object
 The text to be matched will be matched against the keys ordered together.
