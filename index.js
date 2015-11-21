@@ -1,13 +1,43 @@
-var adjust = function(str) {
-  return str.replace(/\W/g,' ').replace(/\s/g,'').trim().split('')
+RegExp.escape = function(text) {
+  if (!arguments.callee.sRE) {
+    var specials = [
+      '/', '.', '*', '+', '?', '|',
+      '(', ')', '[', ']', '{', '}', '\\'
+    ];
+    arguments.callee.sRE = new RegExp(
+      '(\\' + specials.join('|\\') + ')', 'g'
+    );
+  }
+  return text.replace(arguments.callee.sRE, '\\$1');
 }
 
-var metric = function(a, b) {
+var adjust = function(str) {
+  return str.replace(/\W/g,' ').replace(/\s/g,'').trim().toLowerCase().split('')
+}
+
+var metric_with_discard = function(a, b) {
   if (b.length > a.length) {
     var c = b
     b = a
     a = c 
   }
+  var xz = adjust(a)
+  var yz = adjust(b)
+  var idx = 0;
+  var count = 0;
+  for (var i = 0; i < xz.length; i++) {
+    var ch = xz[i]
+    if (yz[idx] === undefined)
+      break;
+    var ch2 = yz[idx]
+    if (ch == ch2) {
+      count++
+      idx++
+    }
+  }
+  return count
+}
+var metric = function(a, b) {
   var xz = adjust(a)
   var yz = adjust(b)
   var idx = 0;
@@ -41,10 +71,13 @@ var _corpus = []
 var fn = function(corpus) {
   _corpus = _corpus.concat(corpus)
 }
-fn.metric = metric
+fn.metric = metric_with_discard
+
 fn.match = function(text,fields,pref_fields) {
   if (fields === undefined)
     fields = []
+  var metric = metric_with_discard
+//  var metric = fn.metric
   var results = []
   for (var i = 0; i < _corpus.length; i++) {
     var c = _corpus[i]
@@ -64,7 +97,11 @@ fn.match = function(text,fields,pref_fields) {
             if (pref_fields && pref_fields.length) {
               for (var j = 0; j < pref_fields.length; j++) {
                 var key = pref_fields[j]
-                var re = new RegExp('^'+c[key]+'$')
+                if (c[key] === undefined) {
+                  continue;
+                }
+                var z = RegExp.escape(c[key])
+                var re = new RegExp('^'+z+'$',"i")
                 if (text.match(re)) {
                   m = 1000;
                   results.push({metric:m, corpus:c})
@@ -81,9 +118,11 @@ fn.match = function(text,fields,pref_fields) {
                 }
               })
               str = str.trim()
-              //console.log("COMPARING WITH STR:", str)
-              var m = metric(str, text)
-              results.push({metric:m, corpus:c})
+             // console.log("COMPARING WITH STR:", str)
+              if (str.length !== 0) {
+                var m = metric(str, text)
+                results.push({metric:m, corpus:c})
+              }
             }
           } else { 
             for (var j = 0; j < keys.length; j++) {

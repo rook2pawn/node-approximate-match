@@ -1,4 +1,7 @@
 var approx = require('./index.js')
+
+
+/*
 var assert = require('assert')
 
 assert.equal(8,approx.metric('San Diego State','SD ST.'))
@@ -20,3 +23,4 @@ state: 'Texas'})
 var res = approx.match('Abilene Wildcats', ['name','mascot'])
 assert.equal(res[0].metric,31)
 assert.equal(res[0].corpus.name,'Abilene Christian University')
+*/
