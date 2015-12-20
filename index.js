@@ -11,8 +11,11 @@ RegExp.escape = function(text) {
   return text.replace(arguments.callee.sRE, '\\$1');
 }
 
-var adjust = function(str) {
-  return str.replace(/\W/g,' ').replace(/\s/g,'').trim().toLowerCase().split('')
+var adjust = function(str,nosplit) {
+  if (nosplit)
+    return str.replace(/\W/g,' ').replace(/\s/g,'').trim().toLowerCase()
+  else
+    return str.replace(/\W/g,' ').replace(/\s/g,'').trim().toLowerCase().split('')
 }
 
 var metric_with_discard = function(a, b) {
@@ -74,6 +77,7 @@ var fn = function(corpus) {
 fn.metric = metric_with_discard
 
 fn.match = function(text,fields,pref_fields) {
+  text = adjust(text,true)
   if (fields === undefined)
     fields = []
   var metric = metric_with_discard
@@ -101,7 +105,7 @@ fn.match = function(text,fields,pref_fields) {
                   continue;
                 }
                 var z = RegExp.escape(c[key])
-                var re = new RegExp('^'+z+'$',"i")
+                var re = new RegExp('^'+adjust(z,true)+'$',"i")
                 if (text.match(re)) {
                   m = 1000;
                   results.push({metric:m, corpus:c})
