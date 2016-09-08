@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rook2pawn/node-approximate-match.svg?branch=master)](https://travis-ci.org/rook2pawn/node-approximate-match)
+
 approximate-match
 =================
 
