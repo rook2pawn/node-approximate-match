@@ -107,3 +107,20 @@ Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
     // 8
 
 
+.setMetric
+----------
+
+You can use your own metric or use the convenience metrics available on
+the require object
+
+var ApproxMatch = require('approximate-match');
+var ap = new ApproxMatch;
+
+
+// this metric is the forgiving forward metric
+ap.setMetric(ApproxMatch.metric)
+
+// or 
+
+// this metric rewards continual letter-by-letter matching
+ap.setMetric(ApproxMatch.metric_with_discard)

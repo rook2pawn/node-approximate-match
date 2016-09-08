@@ -81,8 +81,7 @@ var match = function(text,fields,pref_fields) {
   text = adjust(text,true)
   if (fields === undefined)
     fields = []
-  var metric = metric_with_discard
-//  var metric = fn.metric
+  var metric = this.metric;
   var results = []
   for (var i = 0; i < this._corpus.length; i++) {
     var c = this._corpus[i]
@@ -158,6 +157,11 @@ var fn = function(corpus) {
   this.add = add;
   this.match = match;
   this.metric = metric_with_discard
+  this.setMetric = function(fn) {
+    this.metric = fn;
+  }
 }
+fn.metric = metric;
+fn.metric_with_discard = metric_with_discard;
 
 module.exports = exports = fn
