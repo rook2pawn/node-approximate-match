@@ -2,51 +2,68 @@ approximate-match
 =================
 
 Provides approximate string matching. Works intuitively well, compared to say Levenshtein edit distance.
-
 Specially works with human typing abbreviations.
 
-Methods
-=======
+Main Methods
+============
 
-.metric(string1,string2)
-------------------------
+Add to the corpus on initialization
 
-Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
-
-    var approx = require('approximate-match')
-    approx.metric("N'wstrn", "Northerwestern University")
-    // 8
+    var ApproxMatch = require('approximate-match')
+    var ap = new ApproxMatch(['Northwestern University','San Diego State'])
 
 
-.add(string)
-------------
+Or add to the corpus with .add
 
-    var approx = require('approximate-match')
-  
-    // filling the corpus
-    approx(['Northwestern University','San Diego State'])
-    // also fill the corpus via .add
-    approx.add('Northwestern University')
+    var ApproxMatch = require('approximate-match')
+    var ap = new ApproxMatch;
+    ap.add('Northwestern University')
 
+
+Corpus association
+==================
+
+Individual string items that are searched within the corpus can be associated with an object or atomic, so that
+those associations can be retrieved upon matching.
 
 
 .add(string,value)
 ------------------
 
-approx.add('University of Notre Dame',{foo:'bar})
+Here we associate {foo:'bar'} with "University of Notre Dame"
+
+    approx.add('University of Notre Dame',{foo:'bar})
 
 
+Searching over Fields
+=====================
 
 .add(object)
 ------------
 
-You can add either a string or an object. If you add an object its fields will be searched over
+If you add an object its fields will be searched over
     
     approx.add({key1:'foo', key2:'bar',key3:'baz})
     approx.match('foo')
     // {key1:'foo', key2:'bar',key3:'baz}
 
+Note that adding an object precludes it from having an associated return object. This may change in the future.
 
+
+
+Matching
+========
+
+Ease of Use of the .match function. Weather your corpus has a mix of both string items and objects, .match will search across all of them. 
+
+Example:
+
+    ap.add({foo:'gabby', bar:'cupid'})
+    ap.add({foo:'monsoon', bar:'annie'})
+    res = ap.match('monsoon')
+    assert.deepEqual(res[0],{ metric: 7, corpus: { foo: 'monsoon', bar: 'annie' } })
+    res = ap.match('Northwest')
+    assert.deepEqual(res[0], { metric: 9, corpus: 'Northwestern University' })
 
 .match(string)
 --------------
@@ -72,3 +89,19 @@ The text to be matched will be matched against the keys ordered together.
     approx.match('Abilene Wildcats', ['name','mascot'])
     // 'Abilene Wildcats' will be matched against 'Abilene Christian University Wildcats'
     // and return that object
+
+
+Other Methods
+===================
+
+.metric(string1,string2)
+------------------------
+
+Want a metric between N'WSTRN and NORTHWESTERN UNIVERSITY?
+
+    var ApproxMatch = require('approximate-match')
+    var ap = new ApproxMatch;
+    ap.metric("N'wstrn", "Northerwestern University")
+    // 8
+
+

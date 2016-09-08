@@ -70,21 +70,22 @@ var metric = function(a, b) {
   }
   return count
 }
-var _corpus = []
-var fn = function(corpus) {
-  _corpus = _corpus.concat(corpus)
+var add = function(corpustext,value) {
+  if ((value !== undefined) && (typeof value == 'object')) {
+    this._corpus.push({corpustext:corpustext,value:value})
+  } else {
+    this._corpus.push(corpustext)
+  }
 }
-fn.metric = metric_with_discard
-
-fn.match = function(text,fields,pref_fields) {
+var match = function(text,fields,pref_fields) {
   text = adjust(text,true)
   if (fields === undefined)
     fields = []
   var metric = metric_with_discard
 //  var metric = fn.metric
   var results = []
-  for (var i = 0; i < _corpus.length; i++) {
-    var c = _corpus[i]
+  for (var i = 0; i < this._corpus.length; i++) {
+    var c = this._corpus[i]
     switch (typeof c) {
       case 'string' : 
         var m = metric(c,text)
@@ -93,7 +94,8 @@ fn.match = function(text,fields,pref_fields) {
       case 'object' : 
         if (c.corpustext && c.value) {
           var m = metric(c.corpustext,text)
-          results.push({metric:m, corpus:c.corpustext,value:c.value})
+          var obj = {metric:m, corpus:c.corpustext,value:c.value};
+          results.push(obj);
         } else { 
           var keys = Object.keys(c)
           if (fields && fields.length) {
@@ -147,11 +149,15 @@ fn.match = function(text,fields,pref_fields) {
     return b.metric - a.metric
   })
 }
-fn.add = function(corpustext,value) {
-  if ((value !== undefined) && (typeof value == 'object')) {
-    _corpus.push({corpustext:corpustext,value:value})
-  } else {
-    _corpus.push(corpustext)
-  }
+var fn = function(corpus) {
+  if (!(this instanceof fn))
+    return new fn(corpus)
+  if (corpus === undefined)
+    corpus = []
+  this._corpus = corpus
+  this.add = add;
+  this.match = match;
+  this.metric = metric_with_discard
 }
+
 module.exports = exports = fn
