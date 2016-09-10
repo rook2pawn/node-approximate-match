@@ -6,27 +6,20 @@ approximate-match
 Provides approximate string matching. Works intuitively well, compared to say Levenshtein edit distance.
 Specially works with human typing abbreviations.
 
-Main Methods
+Example
 ============
 
-Add to the corpus on initialization
-
-    var ApproxMatch = require('approximate-match')
-    var ap = new ApproxMatch(['Northwestern University','San Diego State'])
-
-
-Or add to the corpus with .add
 
     var ApproxMatch = require('approximate-match')
     var ap = new ApproxMatch;
     ap.add('Northwestern University')
+    ap.match('Nwstrn Univ.') // Northerwestern University
 
 
-Corpus association
-==================
+Corpus adding and corpus association
+====================================
 
-Individual string items that are searched within the corpus can be associated with an object or atomic, so that
-those associations can be retrieved upon matching.
+Individual string items that are searched within the corpus can be associated with an object, so that those associations can be retrieved upon matching.
 
 
 .add(string,value)
@@ -37,15 +30,20 @@ Here we associate {foo:'bar'} with "University of Notre Dame"
     approx.add('University of Notre Dame',{foo:'bar})
 
 
-Searching over Fields
-=====================
+.add(string1, string2, ...  value)
+----------------------------------
 
-.add(object)
+We can also add multiple strings as a corpus to associate to a single value
+
+    approx.add('UND', 'Notre Dame', 'ND Fighting Irish', {foo:'bar'})
+
+
+.addObject(object)
 ------------
 
 If you add an object its fields will be searched over
     
-    approx.add({key1:'foo', key2:'bar',key3:'baz})
+    approx.addObject({key1:'foo', key2:'bar',key3:'baz})
     approx.match('foo')
     // {key1:'foo', key2:'bar',key3:'baz}
 
@@ -60,8 +58,8 @@ Ease of Use of the .match function. Weather your corpus has a mix of both string
 
 Example:
 
-    ap.add({foo:'gabby', bar:'cupid'})
-    ap.add({foo:'monsoon', bar:'annie'})
+    ap.addObject({foo:'gabby', bar:'cupid'})
+    ap.addObject({foo:'monsoon', bar:'annie'})
     res = ap.match('monsoon')
     assert.deepEqual(res[0],{ metric: 7, corpus: { foo: 'monsoon', bar: 'annie' } })
     res = ap.match('Northwest')
@@ -83,7 +81,7 @@ If there was an associated object it will be returned as well
 You can specify certain fields if the internal matching encounters an object
 The text to be matched will be matched against the keys ordered together.
 
-    approx.add({ name: 'Abilene Christian University',
+    approx.addObject({ name: 'Abilene Christian University',
     mascot: 'Wildcats',
     city: 'Abilene',
     state: 'Texas'})
@@ -117,10 +115,10 @@ var ApproxMatch = require('approximate-match');
 var ap = new ApproxMatch;
 
 
-// this metric is the forgiving forward metric
-ap.setMetric(ApproxMatch.metric)
+This is the default, metric_with_discard
 
-// or 
+    ap.setMetric(ApproxMatch.metric_with_discard)
 
-// this metric rewards continual letter-by-letter matching
-ap.setMetric(ApproxMatch.metric_with_discard)
+or this metric rewards continual letter-by-letter matching
+  
+    ap.setMetric(ApproxMatch.metric)

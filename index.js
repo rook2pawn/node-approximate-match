@@ -70,12 +70,21 @@ var metric = function(a, b) {
   }
   return count
 }
-var add = function(corpustext,value) {
-  if ((value !== undefined) && (typeof value == 'object')) {
-    this._corpus.push({corpustext:corpustext,value:value})
+var add = function() {
+  var args = [].slice.call(arguments);
+  var last = args[args.length -1] 
+  if (typeof last == 'object') {
+    for (var i = 0; i < args.length - 1; i++) {
+      this._corpus.push({corpustext:args[i],value:last});
+    }
   } else {
-    this._corpus.push(corpustext)
+    for (var i = 0; i < args.length; i++) {
+      this._corpus.push(args[i])
+    }
   }
+}
+var addObject = function(corpusobject) {
+  this._corpus.push(corpusobject);
 }
 var match = function(text,fields,pref_fields) {
   text = adjust(text,true)
@@ -154,6 +163,7 @@ var fn = function(corpus) {
   if (corpus === undefined)
     corpus = []
   this._corpus = corpus
+  this.addObject = addObject;
   this.add = add;
   this.match = match;
   this.metric = metric_with_discard
