@@ -46,17 +46,19 @@ var metric = function(a, b) {
   var idx = 0;
   var count = 0;
   var dist = undefined
-  var maxvalued = (2*yz.length) - 1
+  var skips = 0;
+  var maxvalued = (2*(yz.length - 1)) + 4;
   for (var i = 0; i < yz.length; i++) {
     var ch = yz[i].toLowerCase()
     for (var j = idx; j < xz.length; j++) {
       var ch2 = xz[j].toLowerCase()
       if (ch == ch2) {
-        if (dist === 0) 
+        if (dist === 0) {
           count += 2; 
-        else
+        } else {
           count++
-        if (i === 0) {
+        }
+        if (j === 0) {
           count += 3;
         }
         dist = 0;
@@ -64,11 +66,15 @@ var metric = function(a, b) {
         // if we exhaust the max value early we award bonus
         break;
       } else {
-        dist++
+        dist++;
+        skips++;
       }
     }
   }
-  return count
+  if ((xz.length === yz.length) && (count >= maxvalued)) {
+    count += 10
+  }
+  return count - skips
 }
 var add = function() {
   var args = [].slice.call(arguments);
@@ -132,7 +138,6 @@ var match = function(text,fields,pref_fields) {
                 }
               })
               str = str.trim()
-             // console.log("COMPARING WITH STR:", str)
               if (str.length !== 0) {
                 var m = metric(str, text)
                 results.push({metric:m, corpus:c})

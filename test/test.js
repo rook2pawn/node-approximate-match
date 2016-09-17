@@ -57,5 +57,16 @@ test('match across multiple items for the same object', function(t) {
     // use the metric that rewards sequential matching
     ap.setMetric(approx.metric)
     res = ap.match('USC');
-    t.deepEqual(res[0], { metric: 8, corpus: 'USC', value: { school: 'USC' } })
+    t.deepEqual(res[0], { metric: 18, corpus: 'USC', value: { school: 'USC' } })
 })
+
+
+
+test('test exact score bonus metric', function (t) {
+    var ap = new approx;
+    ap.setMetric(approx.metric)
+    t.plan(1);
+    ap.add('Kansas');
+    var res = ap.match('KANSAS')
+    t.equal(res[0].metric, 24)
+});
