@@ -108,7 +108,7 @@ var match = function(text,fields,pref_fields) {
       case 'object' : 
         if (c.corpustext && c.value) {
           var immediate_match = false;
-          if (pref_fields) {
+          if ((pref_fields) && (c.value[pref_fields])) {
             var list = c.value[pref_fields]
             for (var j = 0; j < list.length; j++) {
               if (text == list[j]) {
