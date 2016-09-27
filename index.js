@@ -111,7 +111,7 @@ var match = function(text,fields,pref_fields) {
           if ((pref_fields) && (c.value[pref_fields])) {
             var list = c.value[pref_fields]
             for (var j = 0; j < list.length; j++) {
-              if (text == list[j]) {
+              if (text == adjust(list[j],true)) {
                 m = 1000;
                 results.push({metric:m, corpus:c.corpustext,value:c.value})
                 immediate_match = true
