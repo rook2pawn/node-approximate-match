@@ -1,6 +1,22 @@
 var test = require('tape');
 var approx = require('../index.js')
 
+test('add string list with object at end', function(t) {
+    t.plan(1)
+    var obj = {foo:42}
+    var ap = new approx;
+    ap.add('beep', 'boop','cupid','gabby',obj)
+    var x = ap.match('gabb')
+    t.equal(x[0].corpus, 'gabby')
+})
+test('add string list with object at end immediate match', function(t) {
+    t.plan(1)
+    var obj = {foo:42,bar:['gabster','gab']}
+    var ap = new approx;
+    ap.add('beep',obj)
+    var x = ap.match('gabster',null, 'bar')
+    t.equal(x[0].corpus, 'beep')
+})
 test('metric', function (t) {
     var ap = new approx;
     t.plan(3);

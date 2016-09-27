@@ -107,30 +107,29 @@ var match = function(text,fields,pref_fields) {
         break;
       case 'object' : 
         if (c.corpustext && c.value) {
-          var m = metric(c.corpustext,text)
-          var obj = {metric:m, corpus:c.corpustext,value:c.value};
-          results.push(obj);
+          var immediate_match = false;
+          if (pref_fields) {
+            var list = c.value[pref_fields]
+            for (var j = 0; j < list.length; j++) {
+              if (text == list[j]) {
+                m = 1000;
+                results.push({metric:m, corpus:c.corpustext,value:c.value})
+                immediate_match = true
+                break;
+              }
+            }
+          }
+          if (immediate_match) {
+            break;
+          }
+          else {
+            var m = metric(c.corpustext,text)
+            var obj = {metric:m, corpus:c.corpustext,value:c.value};
+            results.push(obj);
+          }
         } else { 
           var keys = Object.keys(c)
           if (fields && fields.length) {
-            var immediate_match = false;
-            if (pref_fields && pref_fields.length) {
-              for (var j = 0; j < pref_fields.length; j++) {
-                var key = pref_fields[j]
-                if (c[key] === undefined) {
-                  continue;
-                }
-                var z = RegExp.escape(c[key])
-                var re = new RegExp('^'+adjust(z,true)+'$',"i")
-                if (text.match(re)) {
-                  m = 1000;
-                  results.push({metric:m, corpus:c})
-                  immediate_match = true
-                  break;
-                }
-              }
-            } 
-            if (!immediate_match) {
               var str = ''
               fields.forEach(function(key) {
                 if (c[key] !== undefined) {
@@ -142,7 +141,6 @@ var match = function(text,fields,pref_fields) {
                 var m = metric(str, text)
                 results.push({metric:m, corpus:c})
               }
-            }
           } else { 
             for (var j = 0; j < keys.length; j++) {
               var key = keys[j]
